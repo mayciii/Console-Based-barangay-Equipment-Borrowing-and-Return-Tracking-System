@@ -1,0 +1,15 @@
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run: Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "OOP System Project_f703a5b3",
+            "noDebug": true,
+            "vmArgs": ""
+        }
+    ]
+}

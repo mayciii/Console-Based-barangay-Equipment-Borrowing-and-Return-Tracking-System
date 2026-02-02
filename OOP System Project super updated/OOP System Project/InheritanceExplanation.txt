@@ -1,0 +1,75 @@
+Inheritance Explanation in the OOP System Project
+===============================================
+
+This document explains the inheritance hierarchy in the system, focusing on the Account, Admin, and User classes. Inheritance allows a subclass to inherit properties and methods from a parent class, promoting code reuse and establishing an "is-a" relationship.
+
+Key Concepts:
+- **Inheritance**: A mechanism where one class (subclass/child) acquires the properties and behaviors of another class (superclass/parent).
+- **Instance Variables**: Variables declared in a class that hold data specific to each object instance. They are initialized when an object is created.
+- **Instantiation**: The process of creating an object from a class using the 'new' keyword, which calls the constructor.
+- **Super Keyword**: Used in subclasses to call the constructor or methods of the parent class.
+- **Abstract Classes**: Classes that cannot be instantiated directly and may contain abstract methods that must be implemented by subclasses.
+
+Inheritance Hierarchy:
+- Account (base class)
+  - Borrower (abstract subclass of Account)
+    - User (concrete subclass of Borrower)
+  - Admin (concrete subclass of Account)
+
+Detailed Line-by-Line Explanation:
+
+1. Account.java (Base Class)
+   - public class Account {  // Defines the Account class as the root of the inheritance tree.
+     - private String username;  // Instance variable: Stores the username for each Account object. Private for encapsulation.
+     - private String password;  // Instance variable: Stores the password for each Account object. Private for encapsulation.
+     - public Account(String username, String password) {  // Constructor: Initializes the object. Instance variables are set here during instantiation.
+       - this.username = username;  // Assigns the passed username to the instance variable.
+       - this.password = password;  // Assigns the passed password to the instance variable.
+     - }
+     - // Getter and setter methods for encapsulation.
+     - public boolean login(String username, String password) {  // Method to verify credentials.
+       - return this.username.equals(username) && this.password.equals(password);  // Uses instance variables for comparison.
+     - }
+   - }
+
+2. Borrower.java (Abstract Subclass of Account)
+   - public abstract class Borrower extends Account {  // Inherits from Account. Abstract, so cannot be instantiated directly.
+     - public Borrower(String username, String password) {  // Constructor: Calls super to initialize inherited instance variables.
+       - super(username, password);  // Calls Account's constructor to set username and password instance variables.
+     - }
+     - // Abstract methods: Must be implemented by subclasses. Defines the contract for borrowing behavior.
+     - public abstract void borrowItem(Scanner sc, ArrayList<Equipment> list, String name, Admin admin);
+     - public abstract void returnItem(ArrayList<Equipment> list, String name, Admin admin);
+   - }
+
+3. Admin.java (Concrete Subclass of Account)
+   - public class Admin extends Account {  // Inherits from Account. Can be instantiated.
+     - private ArrayList<Equipment> equipmentList;  // Instance variable: List of equipment managed by this Admin. Specific to Admin, not inherited.
+     - private ArrayList<TransactionLog> logs;  // Instance variable: List of transaction logs. Specific to Admin.
+     - private static final SimpleDateFormat dateFormat = ...;  // Static variable: Shared across all Admin instances, not per-object.
+     - public Admin(String username, String password) {  // Constructor: Instantiates Admin object.
+       - super(username, password);  // Calls Account's constructor to initialize inherited username and password.
+       - equipmentList = new ArrayList<>();  // Initializes instance variable: Creates empty list for equipment.
+       - logs = new ArrayList<>();  // Initializes instance variable: Creates empty list for logs.
+     - }
+     - // Methods for CRUD operations on equipment, using instance variables equipmentList and logs.
+     - // Inner class TransactionLog: Defines a nested class for log entries, with its own instance variables (username, equipmentName, etc.).
+   - }
+
+4. User.java (Concrete Subclass of Borrower)
+   - public class User extends Borrower {  // Inherits from Borrower (which inherits from Account). Can be instantiated.
+     - private ArrayList<Equipment> borrowedItems = new ArrayList<>();  // Instance variable: List of items borrowed by this User. Initialized inline.
+     - public User(String username, String password) {  // Constructor: Instantiates User object.
+       - super(username, password);  // Calls Borrower's constructor, which calls Account's, initializing username and password.
+     - }
+     - // Implements abstract methods from Borrower, using instance variable borrowedItems.
+     - @Override public void borrowItem(...) {  // Polymorphism: Overrides abstract method, adds to borrowedItems.
+     - @Override public void returnItem(...) {  // Polymorphism: Overrides abstract method, removes from borrowedItems.
+   - }
+
+Instantiation Examples:
+- Account acc = new Account("user", "pass");  // Creates Account object, initializes username and password.
+- Admin admin = new Admin("admin", "pass");  // Creates Admin object, initializes inherited fields + equipmentList and logs.
+- User user = new User("user", "pass");  // Creates User object, initializes inherited fields + borrowedItems.
+
+This inheritance structure allows Admin and User to reuse Account's authentication logic while adding specialized behaviors.

@@ -1,0 +1,109 @@
+OOP Inheritance Detailed Explanation
+====================================
+
+This document provides a comprehensive explanation of the inheritance part in the OOP System Project, focusing on the Account, Admin, and User classes. It covers key OOP concepts like inheritance, instance variables, instantiation, polymorphism, and abstraction with line-by-line code breakdowns.
+
+1. **Inheritance Overview**
+   Inheritance is a fundamental OOP concept where a class (subclass or child class) inherits properties and behaviors from another class (superclass or parent class). This promotes code reuse and establishes an "is-a" relationship.
+
+   In this system:
+   - Account is the base class (parent).
+   - Admin directly inherits from Account.
+   - Borrower is an abstract class that inherits from Account.
+   - User inherits from Borrower (indirectly from Account).
+
+2. **Key OOP Concepts Explained**
+
+   a. **Instance Variables**
+      - These are variables declared in a class that hold data unique to each object instance.
+      - They are initialized during object creation (instantiation).
+      - Example: In Account.java, 'username' and 'password' are instance variables.
+
+   b. **Instantiation**
+      - The process of creating an object from a class using the 'new' keyword.
+      - This calls the class constructor to initialize the object.
+      - Example: 'new Account("user", "pass")' creates an Account object and sets its instance variables.
+
+   c. **Polymorphism**
+      - Allows methods to behave differently based on the object calling them.
+      - Types: Method Overloading (compile-time) and Method Overriding (runtime).
+
+   d. **Abstraction**
+      - Hiding complex implementation details and showing only essential features.
+      - Achieved through abstract classes and interfaces.
+
+3. **Class Hierarchy and Detailed Code Explanation**
+
+   a. **Account.java (Base Class)**
+      - This is the root class in the inheritance tree.
+      - Line-by-line:
+        - public class Account {  // Declares the Account class.
+        - private String username;  // Instance variable for username (private for encapsulation).
+        - private String password;  // Instance variable for password (private for encapsulation).
+        - public Account(String username, String password) {  // Constructor for instantiation.
+          - this.username = username;  // Sets the username instance variable.
+          - this.password = password;  // Sets the password instance variable.
+        - }
+        - // Getter/setter methods provide controlled access to private variables.
+        - public boolean login(String username, String password) {  // Method using instance variables.
+          - return this.username.equals(username) && this.password.equals(password);  // Compares instance variables.
+        - }
+
+   b. **Borrower.java (Abstract Subclass of Account)**
+      - Inherits from Account but cannot be instantiated directly.
+      - Demonstrates abstraction by defining abstract methods.
+      - Line-by-line:
+        - public abstract class Borrower extends Account {  // Inherits from Account, marked abstract.
+        - public Borrower(String username, String password) {  // Constructor.
+          - super(username, password);  // Calls parent constructor to initialize inherited instance variables.
+        - }
+        - public abstract void borrowItem(...);  // Abstract method: must be implemented by subclasses.
+        - public abstract void returnItem(...);  // Abstract method: must be implemented by subclasses.
+
+   c. **Admin.java (Concrete Subclass of Account)**
+      - Inherits from Account and can be instantiated.
+      - Adds specific instance variables and methods.
+      - Demonstrates polymorphism through method overloading.
+      - Line-by-line:
+        - public class Admin extends Account {  // Inherits from Account.
+        - private ArrayList<Equipment> equipmentList;  // Instance variable specific to Admin.
+        - private ArrayList<TransactionLog> logs;  // Instance variable specific to Admin.
+        - private static final SimpleDateFormat dateFormat = ...;  // Static variable (shared, not per-instance).
+        - public Admin(String username, String password) {  // Constructor for instantiation.
+          - super(username, password);  // Initializes inherited instance variables.
+          - equipmentList = new ArrayList<>();  // Initializes Admin-specific instance variable.
+          - logs = new ArrayList<>();  // Initializes Admin-specific instance variable.
+        - }
+        - public void addEquipment(String name, int qty) { ... }  // Overloaded method (polymorphism).
+        - public void addEquipment(String name) { ... }  // Calls the above with default qty=1.
+
+   d. **User.java (Concrete Subclass of Borrower)**
+      - Inherits from Borrower (which inherits from Account).
+      - Implements abstract methods, demonstrating polymorphism through overriding.
+      - Line-by-line:
+        - public class User extends Borrower {  // Inherits from Borrower.
+        - private ArrayList<Equipment> borrowedItems = new ArrayList<>();  // Instance variable specific to User.
+        - public User(String username, String password) {  // Constructor for instantiation.
+          - super(username, password);  // Initializes inherited instance variables via chain.
+        - }
+        - @Override public void borrowItem(...) {  // Overrides abstract method (polymorphism).
+          - // Implementation specific to User, using borrowedItems instance variable.
+        - }
+        - @Override public void returnItem(...) {  // Overrides abstract method (polymorphism).
+          - // Implementation specific to User, using borrowedItems instance variable.
+        - }
+
+4. **Instantiation Examples**
+   - Account acc = new Account("user", "pass");  // Creates Account, initializes username/password.
+   - Admin admin = new Admin("admin", "pass");  // Creates Admin, initializes inherited + equipmentList/logs.
+   - User user = new User("user", "pass");  // Creates User, initializes inherited + borrowedItems.
+
+5. **Polymorphism in Action**
+   - **Overloading**: Admin's addEquipment methods allow flexible calls.
+   - **Overriding**: User's borrowItem and returnItem provide specific implementations.
+
+6. **Abstraction Benefits**
+   - Borrower abstracts borrowing behavior, allowing User to focus on implementation details.
+   - Promotes modularity: Code is organized, maintainable, and extensible.
+
+This inheritance structure enables Admin and User to share Account's authentication while specializing their behaviors, demonstrating effective OOP design.

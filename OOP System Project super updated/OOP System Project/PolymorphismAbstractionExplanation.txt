@@ -1,0 +1,106 @@
+Polymorphism and Abstraction Explanation in the OOP System Project
+==================================================================
+
+This document focuses on explaining Polymorphism and Abstraction in the system, with line-by-line code breakdowns from Account.java, Admin.java, Borrower.java, and User.java.
+
+1. **Polymorphism Overview**
+   Polymorphism allows methods to behave differently based on the object calling them. It comes in two forms: method overloading (compile-time) and method overriding (runtime).
+
+2. **Abstraction Overview**
+   Abstraction hides complex implementation details and shows only essential features. It's achieved through abstract classes and interfaces.
+
+Detailed Line-by-Line Explanation:
+
+a. **Polymorphism - Method Overloading in Admin.java**
+   Method overloading allows multiple methods with the same name but different parameters. Here, Admin has two addEquipment methods:
+   - One takes (String name, int qty) for adding equipment with a specific quantity.
+   - Another takes (String name) and defaults the quantity to 1 by calling the first method.
+   
+   Line-by-line breakdown:
+   - public void addEquipment(String name, int qty) {  // Overloaded method 1: Explicit quantity.
+     - for (Equipment eq : equipmentList) {  // Checks existing equipment.
+       - if (eq.getName().equalsIgnoreCase(name)) {  // If exists, update quantity.
+         - eq.setQuantity(eq.getQuantity() + qty);
+         - return;
+       - }
+     - }
+     - equipmentList.add(new Equipment(name, qty));  // If not exists, add new.
+   - }
+   - public void addEquipment(String name) {  // Overloaded method 2: Default quantity.
+     - addEquipment(name, 1);  // Calls method 1 with qty=1.
+   - }
+   
+   Why polymorphism? Same method name "addEquipment" handles different scenarios flexibly.
+
+b. **Polymorphism - Method Overriding in User.java**
+   - public class User extends Borrower {  // User inherits from Borrower.
+     - private ArrayList<Equipment> borrowedItems = new ArrayList<>();  // Instance variable for borrowed items.
+     - public User(String username, String password) {  // Constructor.
+       - super(username, password);  // Calls parent constructor.
+     - }
+     - @Override  // Annotation indicating method override.
+     - public void borrowItem(Scanner sc, ArrayList<Equipment> list, String name, Admin admin) {  // Overrides abstract method from Borrower.
+       - for (Equipment eq : list) {  // Loops through equipment list.
+         - if (eq.getName().equalsIgnoreCase(name) && eq.getQuantity() > 0) {  // Checks availability.
+           - System.out.print("Enter your full name: ");  // Prompts for user input.
+           - String borrowerName = sc.nextLine();  // Reads input.
+           - System.out.print("Enter your contact number: ");
+           - String borrowerContact = sc.nextLine();  // Reads input.
+           - eq.setQuantity(eq.getQuantity() - 1);  // Decreases available quantity.
+           - borrowedItems.add(new Equipment(eq.getName(), 1));  // Adds to borrowedItems (instance variable).
+           - admin.addLog(this.getUsername(), eq.getName(), "BORROW", borrowerName, borrowerContact);  // Logs transaction.
+           - System.out.println("You borrowed: " + eq.getName());
+           - return;
+         - }
+       - }
+       - System.out.println("Equipment not available!");
+     - }
+     - @Override  // Annotation for override.
+     - public void returnItem(ArrayList<Equipment> list, String name, Admin admin) {  // Overrides abstract method from Borrower.
+       - Equipment returnItem = null;  // Local variable to find item to return.
+       - for (Equipment eq : borrowedItems) {  // Loops through borrowedItems (instance variable).
+         - if (eq.getName().equalsIgnoreCase(name)) {  // Finds the item.
+           - returnItem = eq;
+           - break;
+         - }
+       - }
+       - if (returnItem != null) {  // If item found.
+         - for (Equipment eq : list) {  // Loops through main equipment list.
+           - if (eq.getName().equalsIgnoreCase(name)) {  // Finds in main list.
+             - eq.setQuantity(eq.getQuantity() + 1);  // Increases quantity.
+             - borrowedItems.remove(returnItem);  // Removes from borrowedItems.
+             - admin.addLog(this.getUsername(), eq.getName(), "RETURN", "-", "-");  // Logs return.
+             - System.out.println("Returned successfully!");
+             - return;
+           - }
+         - }
+       - } else {
+         - System.out.println("You didn't borrow this item.");
+       - }
+     - }
+   - }
+   - Explanation: Method overriding allows User to provide specific implementations for borrowItem and returnItem, differing from potential other Borrower subclasses.
+
+c. **Abstraction in Borrower.java**
+   Abstraction involves showing only essential features while hiding implementation details. Borrower is an abstract class that defines a blueprint for borrowing behavior without providing concrete implementations.
+
+   Key points:
+   - Abstract classes cannot be instantiated directly (you can't create a new Borrower()).
+   - They can have constructors, which are called by subclasses.
+   - Abstract methods have no body and must be implemented by concrete subclasses.
+   - This enforces a contract: any Borrower subclass must provide borrow and return logic.
+
+   Line-by-line breakdown:
+   - public abstract class Borrower extends Account {  // Declares abstract class inheriting from Account.
+     - public Borrower(String username, String password) {  // Constructor for subclasses to call.
+       - super(username, password);  // Initializes inherited username/password.
+     - }
+     - public abstract void borrowItem(Scanner sc, ArrayList<Equipment> list, String name, Admin admin);  // Abstract method: defines "what" to do, not "how".
+     - public abstract void returnItem(ArrayList<Equipment> list, String name, Admin admin);  // Abstract method: defines "what" to do, not "how".
+   - }
+
+   Why abstraction? It allows Borrower to specify that all borrowers must be able to borrow and return items, but leaves the specific implementation to subclasses like User, promoting flexibility and maintainability.
+
+Benefits:
+- Polymorphism enables flexible method calls and runtime behavior variation.
+- Abstraction promotes modularity by separating interface from implementation, making code easier to maintain and extend.
