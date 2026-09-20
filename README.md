@@ -1,4 +1,4 @@
-THIS PROJECT IS TO BE IMPROVED
+
 
 ## Barangay Equipment Borrowing System
 A console-based Java OOP system for tracking equipment borrowed by barangay residents.
